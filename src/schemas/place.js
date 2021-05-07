@@ -23,7 +23,8 @@ const PlaceSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             Ref: 'evaluation'
         }
-    ]
+    ],
+    Notice: Number
 })
 //PlaceSchema.plugin(require('mongoose-autopopulate'))
 module.exports = mongoose.model('place', PlaceSchema)

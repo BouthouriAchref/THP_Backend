@@ -13,7 +13,7 @@ exports.addEvaluation = (req, res) => {
                     if (err) {
                         res.status(400).json({ 'msg': err })
                     } else {
-                        place.findOneAndUpdate({ "_id": req.params.placeId }, { $set: { "Evaluation": Evaluation._id } }, { new: true, useFindAndModify: false }, (err, place) => {
+                        place.findOneAndUpdate({ "_id": req.params.placeId }, { $push: { "Evaluation": Evaluation._id } }, { new: true, useFindAndModify: false }, (err, place) => {
                             if (err) {
                                 res.status(400).json({ 'msg': err })
                             } else {

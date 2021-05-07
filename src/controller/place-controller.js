@@ -53,17 +53,46 @@ exports.addPlace = (req, res) => {
 exports.getPlaceById = (req, res) => {
     try {
         place.findById(req.params.placeId, (err, place) => {
-            console.log('Place', place)
+            //console.log('Place', place)
             //console.log('error',err)
             if (err) {
                 res.status(400).json({ msg: 'no place found with this ID' })
             }
-            res.status(201).json(place)
-        })
-            .populate({
-                path: "Attachement",
-                model: "attachment"
+            let note = 0
+            for (let eval of place.Evaluation) {
+                if (place.Evaluation.length) {
+                    note = eval.Notice + note;
+                }
+            }
+            if (place.Evaluation.length) {
+                note = note / place.Evaluation.length;
+
+            }
+            //console.log(note)
+            place.Notice = note;
+            res.status(201).json({
+                data: place,
+                success: true
             })
+        }).populate([{
+            path: "Attachement",
+            model: "attachment"
+        },
+        {
+            path: "Evaluation",
+            model: "evaluation",
+            populate: {
+                path: "CreatedBy",
+                model: "user",
+                populate: {
+                    path: "Avatar",
+                    model: "attachment"
+                }
+
+            }
+
+        }
+        ]);
     } catch {
         (err => {
             console.log(err);
@@ -84,6 +113,21 @@ exports.getAllPlaces = (req, res) => {
                     success: false
                 })
             } else {
+                for (let place of places) {
+                    let note = 0
+                    for (let eval of place.Evaluation) {
+                        if (place.Evaluation.length) {
+                            note = eval.Notice + note;
+                        }
+                    }
+                    if (place.Evaluation.length) {
+                        note = note / place.Evaluation.length;
+                        //console.log('___________________',note)
+
+                    }
+                    place.Notice = note;
+                    //console.log(note)
+                }
                 res.status(201).json({
                     data: places,
                     success: true
