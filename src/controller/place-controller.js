@@ -37,12 +37,12 @@ exports.addPlace = (req, res) => {
                             user: result
                         })
                     }
-                }).populate([{
-                    path: "Places",
-                    model: "place"
-                }])
+                })
             }
-        })
+        }).populate([{
+            path: "Places",
+            model: "place"
+        }])
     } catch {
         (err => {
             console.log(err);
