@@ -23,7 +23,7 @@ exports.addPlace = (req, res) => {
     try {
         // let newPlace = Place(req.body)
         let newPlace = new Place(placeToSend)
-            //console.log('place', newPlace)
+        console.log('place', newPlace)
         newPlace.save((err, place) => {
             if (err) {
                 res.satus(400).json({ 'msg': err })
