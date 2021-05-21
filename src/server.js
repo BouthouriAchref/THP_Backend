@@ -26,7 +26,7 @@ const passportMiddleware = require('./middleware/passport')
 passport.use(passportMiddleware);
 
 app.get('/', function(req, res) {
-    return res.send('Hello! The API is at http://localhost:' + port + '/api');
+    return res.send('Hello! The API is at https://tunisian-hidden-places.herokuapp.com:' + port + '/api');
 });
 
 // const routes = require('./routes.js');
@@ -54,4 +54,4 @@ connection.on('error', (err) => {
     process.exit();
 });
 app.listen(port);
-console.log('There will be dragons:' + port);
+console.log('There will be dragons: http://localhost:' + port);
