@@ -91,8 +91,6 @@ exports.registerUserFacebook = async(req, res) => {
     }
 }
 
-
-
 exports.loginUser = (req, res) => {
     //console.log('"""', req.body);
     try {
@@ -204,7 +202,6 @@ exports.GetAllUsers = (req, res) => {
         });
     }
 }
-
 
 exports.deleteUser = (req, res) => {
     try {

@@ -4,12 +4,13 @@ const place = require('../schemas/place');
 const user = require('../schemas/user');
 
 exports.addPlace = (req, res) => {
+    console.log('___', req.body)
     const { name, description, address, state, city, zip, lat, lon, category } = req.body
     const placeToSend = {
         Name: name,
         Description: description,
         Address: {
-            location: {
+            Location: {
                 Lat: lat,
                 Lon: lon
             },
@@ -37,12 +38,12 @@ exports.addPlace = (req, res) => {
                             user: result
                         })
                     }
-                })
+                }).populate([{
+                    path: "Places",
+                    model: "place"
+                }])
             }
-        }).populate([{
-            path: "Places",
-            model: "place"
-        }])
+        })
     } catch {
         (err => {
             console.log(err);
