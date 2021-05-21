@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 
 const app = express();
 app.use(morgan("dev"));
-app.use('/uploads',express.static('uploads'));
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -25,7 +25,7 @@ app.use(passport.initialize());
 const passportMiddleware = require('./middleware/passport')
 passport.use(passportMiddleware);
 
-app.get('/', function (req, res) {
+app.get('/', function(req, res) {
     return res.send('Hello! The API is at http://localhost:' + port + '/api');
 });
 
@@ -33,7 +33,7 @@ app.get('/', function (req, res) {
 // app.use('/api', routes);
 
 const AuthRoute = require('./routes/User');
-app.use('/api/Auth' ,AuthRoute);
+app.use('/api/Auth', AuthRoute);
 
 const PlaceRoute = require('./routes/Place');
 app.use('/api/Place', PlaceRoute);
@@ -41,7 +41,7 @@ app.use('/api/Place', PlaceRoute);
 const EvaluationRoute = require('./routes/Evaluation');
 app.use('/api/evaluation', EvaluationRoute)
 
-mongoose.connect(config.db || process.env.MONGODB_URI, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
+mongoose.connect(config.db, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 
 const connection = mongoose.connection;
 
@@ -54,4 +54,4 @@ connection.on('error', (err) => {
     process.exit();
 });
 app.listen(port);
-console.log('There will be dragons: http://localhost:' + port);
+console.log('There will be dragons:' + port);

@@ -11,7 +11,7 @@ const UserSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    IDF:{
+    IDF: {
         type: String,
         default: null
     },
@@ -44,32 +44,30 @@ const UserSchema = new mongoose.Schema({
     Places: [{
         type: mongoose.Schema.Types.ObjectId,
         Ref: 'place'
-    }
-    ],
+    }],
     HasPlaces: {
         type: Boolean,
         default: false
     },
-    FavoritesPlaces: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            Ref: 'place'
-        }
-    ],
+    FavoritesPlaces: [{
+        type: mongoose.Schema.Types.ObjectId,
+        Ref: 'place'
+    }],
     CreatedAt: {
-        type: Date, default: Date.now
+        type: Date,
+        default: Date.now
     }
 })
 
-UserSchema.pre('save', function (next) {
+UserSchema.pre('save', function(next) {
     const user = this;
 
     if (!user.isModified('password')) return next();
 
-    bcrypt.genSalt(10, function (err, salt) {
+    bcrypt.genSalt(10, function(err, salt) {
         if (err) return next(err);
 
-        bcrypt.hash(user.password, salt, function (err, hash) {
+        bcrypt.hash(user.password, salt, function(err, hash) {
             if (err) return (err);
 
             user.password = hash;
@@ -80,7 +78,7 @@ UserSchema.pre('save', function (next) {
 
 });
 
-UserSchema.methods.comparePassword = function (candidatePassword, cb) {
+UserSchema.methods.comparePassword = function(candidatePassword, cb) {
     bcrypt.compare(candidatePassword, this.password, (err, isMatch) => {
         if (err) return cb(err);
         cb(null, isMatch);
