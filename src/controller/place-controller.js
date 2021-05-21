@@ -37,7 +37,10 @@ exports.addPlace = (req, res) => {
                             user: result
                         })
                     }
-                })
+                }).populate([{
+                    path: "Places",
+                    model: "place"
+                }])
             }
         })
     } catch {
@@ -257,7 +260,7 @@ exports.getAllPlacesToCheck = (req, res) => {
 
 exports.uploadImagePlace = (req, res) => {
     try {
-        attachement.create({ "Name": req.file.filename, "Path": "http://localhost:3000/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
