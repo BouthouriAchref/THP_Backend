@@ -15,7 +15,7 @@ exports.addPlace = (req, res) => {
                 Lon: lon
             },
             Text: address,
-            Departement: state,
+            Department: state,
             City: city,
             PostalCode: zip
         },
