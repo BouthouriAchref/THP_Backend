@@ -7,7 +7,7 @@ const { db } = require('../config/config');
 exports.uploadImage = (req, res) => {
     try {
         //console.log('______', req.file.path)
-        attachement.create({"Name": req.file.filename ,"Path": "http://localhost:3000/"+req.file.path.replace("\\","/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length-4,req.file.filename.length)) }, async (err, result) => {
+        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
@@ -22,12 +22,12 @@ exports.uploadImage = (req, res) => {
                         })
                     } else {
                         res.status(201).json({
-                            message: "succes uploading",
-                            result: result
-                            //result: JSON.stringify(result.path).replace('\\','/')
-                        })
-                        //res.sendFile(path.join('', JSON.stringify(result)))
-                        //res.sendFile(path.join(__dirname, 'public', result))
+                                message: "succes uploading",
+                                result: result
+                                    //result: JSON.stringify(result.path).replace('\\','/')
+                            })
+                            //res.sendFile(path.join('', JSON.stringify(result)))
+                            //res.sendFile(path.join(__dirname, 'public', result))
                     }
                 }).populate("attachement")
             }
@@ -45,11 +45,11 @@ exports.uploadImage = (req, res) => {
 exports.getImage = (req, res) => {
     let imgId = req.params.imageId;
 
-    attachement.findById(imgId, (err, image)=>{
-        if (err){
+    attachement.findById(imgId, (err, image) => {
+        if (err) {
             return res.status(400);
         }
-        res.setHeader('Content-Type','image/jpeg');
+        res.setHeader('Content-Type', 'image/jpeg');
         fs.createReadStream(path.join("uploads", image.Name)).pipe(res);
     });
 }
@@ -86,4 +86,3 @@ exports.getAvatar = (req, res) => {
     }
 
 }
-
