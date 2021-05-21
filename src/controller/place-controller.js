@@ -11,8 +11,8 @@ exports.addPlace = (req, res) => {
         Description: description,
         Address: {
             Location: {
-                Lat: req.body.lat,
-                Lon: req.body.lon
+                Lat: lat,
+                Lon: lon
             },
             Text: address,
             Department: state,
