@@ -261,6 +261,7 @@ exports.getAllPlacesToCheck = (req, res) => {
 
 exports.uploadImagePlace = (req, res) => {
     try {
+        console.log(req.file)
         attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
@@ -277,7 +278,8 @@ exports.uploadImagePlace = (req, res) => {
                     } else {
                         res.status(201).json({
                             message: "succes uploading",
-                            result: result
+                            result: result,
+                            test: req.file
                         })
                     }
                 })
