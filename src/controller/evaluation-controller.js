@@ -4,6 +4,7 @@ const place = require('../schemas/place');
 
 exports.addEvaluation = (req, res) => {
     try {
+        console.log('___', req.body, '__', req.params.placeId, '333', req.params.userId)
         let newEvaluation = evaluation(req.body)
         newEvaluation.save((err, Evaluation) => {
             if (err) {
@@ -13,7 +14,7 @@ exports.addEvaluation = (req, res) => {
                     if (err) {
                         res.status(400).json({ 'msg': err })
                     } else {
-                        place.findOneAndUpdate({ "_id": req.params.placeId }, { $set: { "Notice": req.body.Notice } }, { $push: { "Evaluation": Evaluation._id } }, { new: true, useFindAndModify: false }, (err, place) => {
+                        place.findOneAndUpdate({ "_id": req.params.placeId }, [{ $set: { "Notice": req.body.Notice } }, { $push: { "Evaluation": Evaluation._id } }], { new: true, useFindAndModify: false }, (err, place) => {
                             if (err) {
                                 res.status(400).json({ 'msg': err })
                             } else {
