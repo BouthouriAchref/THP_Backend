@@ -258,15 +258,15 @@ exports.getAllPlacesToCheck = (req, res) => {
     }
 }
 
-
 exports.uploadImagePlace = (req, res) => {
     try {
         console.log(req.file)
-        attachement.create({ "Name": req.file.filename.substring(1, 100), "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        attachement.create({ "Name": req.file.filename.substr(0, 100), "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
-                    error: err
+                    error: err,
+                    reqFile: req.file
                 })
             } else {
                 Place.findOneAndUpdate({ "_id": req.params.placeId }, { $push: { "Attachement": result._id } }, { new: true, useFindAndModify: false }, (errr, resul) => {
