@@ -70,7 +70,7 @@ exports.getPlaceById = (req, res) => {
                 }
             }
             if (place.Evaluation.length) {
-                note = note / place.Evaluation.length;
+                note = parseInt(note / place.Evaluation.length);
 
             }
             //console.log(note)
@@ -126,7 +126,7 @@ exports.getAllPlaces = (req, res) => {
                         }
                     }
                     if (place.Evaluation.length) {
-                        note = note / place.Evaluation.length;
+                        note = parseInt(note / place.Evaluation.length);
                         //console.log('___________________',note)
 
                     }

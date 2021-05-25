@@ -20,7 +20,10 @@ const PlaceSchema = new Schema({
             type: mongoose.Schema.Types.ObjectId,
             Ref: 'evaluation'
         }],
-        Notice: Number,
+        Notice: {
+            Number,
+            default: 0
+        },
         Status: {
             type: Boolean,
             default: false
