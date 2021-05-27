@@ -220,18 +220,6 @@ exports.getAllPlaces = (req, res) => {
                 path: "Evaluation",
                 model: "evaluation"
 
-            },
-            {
-                path: "Category",
-                model: "category"
-            },
-            {
-                path: "CreatedBy",
-                model: "user",
-                populate: {
-                    path: "Avatar",
-                    model: "attachment"
-                }
             }
         ])
     } catch {
@@ -282,18 +270,6 @@ exports.getAllPlacesNoCheck = (req, res) => {
                 path: "Evaluation",
                 model: "evaluation"
 
-            },
-            {
-                path: "Category",
-                model: "category"
-            },
-            {
-                path: "CreatedBy",
-                model: "user",
-                populate: {
-                    path: "Avatar",
-                    model: "attachment"
-                }
             }
         ])
     } catch {
@@ -344,18 +320,6 @@ exports.getAllPlacesToCheck = (req, res) => {
                 path: "Evaluation",
                 model: "evaluation"
 
-            },
-            {
-                path: "Category",
-                model: "category"
-            },
-            {
-                path: "CreatedBy",
-                model: "user",
-                populate: {
-                    path: "Avatar",
-                    model: "attachment"
-                }
             }
         ])
     } catch {
