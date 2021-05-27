@@ -131,10 +131,29 @@ exports.loginUser = (req, res) => {
 exports.GetUserById = (req, res) => {
     try {
         User.findById(req.params.userId, (err, user) => {
+            console.log(user.Places)
             if (err) {
                 res.status(400).json({ msg: 'no user found with this ID' })
+            } else {
+
+                for (let place of user.Places) {
+                    let note = 0
+                    for (let eval of place.Evaluation) {
+                        if (place.Evaluation.length) {
+                            note = eval.Notice + note;
+                        }
+                    }
+                    if (place.Evaluation.length) {
+                        note = note / place.Evaluation.length;
+                        //console.log('___________________', note)
+
+                    }
+                    place.Notice = Math.floor(note);
+                    //console.log(note)
+                }
+                res.json(user.Places)
             }
-            res.json(user)
+
         }).populate([{
                 path: "Avatar", // name field in shema
                 model: "attachment", // name document
@@ -142,10 +161,16 @@ exports.GetUserById = (req, res) => {
             {
                 path: "Places",
                 model: "place",
-                populate: {
-                    path: "Attachement",
-                    model: "attachment"
-                }
+                populate: (
+                    [{
+                        path: "Attachement",
+                        model: "attachment"
+                    }, {
+                        path: "Evaluation",
+                        model: "evaluation"
+                    }]
+                )
+
             },
             {
                 path: "FavoritesPlaces",
