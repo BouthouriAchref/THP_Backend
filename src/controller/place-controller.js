@@ -155,21 +155,22 @@ exports.getPlaceById = (req, res) => {
                 model: "attachment"
             },
             {
-                path: "Evaluation",
-                model: "evaluation"
-
-            },
-            {
                 path: "Category",
                 model: "category"
             },
             {
-                path: "CreatedBy",
-                model: "user",
+                path: "Evaluation",
+                model: "evaluation",
                 populate: {
-                    path: "Avatar",
-                    model: "attachment"
+                    path: "CreatedBy",
+                    model: "user",
+                    populate: {
+                        path: "Avatar",
+                        model: "attachment"
+                    }
+
                 }
+
             }
         ]);
     } catch {
