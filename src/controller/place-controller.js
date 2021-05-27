@@ -5,7 +5,7 @@ const user = require('../schemas/user');
 
 exports.addPlace = (req, res) => {
     console.log('___', req.body)
-    const { name, description, address, state, city, zip, lat, lon, category } = req.body
+    const { name, description, address, state, city, zip, lat, lon } = req.body
     const placeToSend = {
         Name: name,
         Description: description,
@@ -18,8 +18,7 @@ exports.addPlace = (req, res) => {
             Department: state,
             City: city,
             PostalCode: zip
-        },
-        Category: category
+        }
     }
     try {
         // let newPlace = Place(req.body)
@@ -29,19 +28,29 @@ exports.addPlace = (req, res) => {
             if (err) {
                 res.satus(400).json({ 'msg': err })
             } else {
-                user.findOneAndUpdate({ "_id": req.params.userId }, { $set: { "HasPlaces": true }, $push: { "Places": newPlace._id } }, { new: true, useFindAndModify: false }, (err, result) => {
+                Place.findOneAndUpdate({ "_id": newPlace._id }, { $set: { "Category": req.body.category, "CreatedBy": req.params.userId } }, { new: true, useFindAndModify: false }, (err, resultt) => {
                     if (err) {
                         res.status(400).json({ 'msg': err })
                     } else {
-                        res.status(201).json({
-                            msg: 'succes',
-                            user: result
-                        })
+                        user.findOneAndUpdate({ "_id": req.params.userId }, { $set: { "HasPlaces": true }, $push: { "Places": newPlace._id } }, { new: true, useFindAndModify: false }, (err, result) => {
+                            if (err) {
+                                res.status(400).json({ 'msg': err })
+                            } else {
+                                res.status(201).json({
+                                    msg: 'succes',
+                                    user: result
+                                })
+                            }
+                        }).populate([{
+                            path: "Places",
+                            model: "place",
+                            populate: {
+                                path: "Category",
+                                model: "category"
+                            }
+                        }])
                     }
-                }).populate([{
-                    path: "Places",
-                    model: "place"
-                }])
+                })
             }
         })
     } catch {
@@ -54,6 +63,68 @@ exports.addPlace = (req, res) => {
     }
 }
 
+exports.getPlaceByCategory = (req, res) => {
+    try {
+        Place.find({ 'Category': req.params.catId }, (err, places) => {
+            if (err) {
+                res.status(400).json({
+
+                    'msg': err,
+                    success: false
+                })
+            } else {
+                for (let place of places) {
+                    let note = 0
+                    for (let eval of place.Evaluation) {
+                        if (place.Evaluation.length) {
+                            note = eval.Notice + note;
+                        }
+                    }
+                    if (place.Evaluation.length) {
+                        note = note / place.Evaluation.length;
+                        //console.log('___________________', note)
+
+                    }
+                    place.Notice = Math.floor(note);
+                    //console.log(note)
+                }
+                res.status(201).json({
+                    data: places,
+                    success: true
+                })
+            }
+        }).populate([{
+                path: "Attachement",
+                model: "attachment"
+            },
+            {
+                path: "Evaluation",
+                model: "evaluation"
+
+            },
+            {
+                path: "Category",
+                model: "category"
+            },
+            {
+                path: "CreatedBy",
+                model: "user",
+                populate: {
+                    path: "Avatar",
+                    model: "attachment"
+                }
+            }
+
+        ])
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+}
 
 exports.getPlaceById = (req, res) => {
     try {
@@ -70,11 +141,11 @@ exports.getPlaceById = (req, res) => {
                 }
             }
             if (place.Evaluation.length) {
-                note = parseInt(note / place.Evaluation.length);
+                note = note / place.Evaluation.length;
 
             }
             //console.log(note)
-            place.Notice = note;
+            place.Notice = Math.floor(note);
             res.status(201).json({
                 data: place,
                 success: true
@@ -126,11 +197,11 @@ exports.getAllPlaces = (req, res) => {
                         }
                     }
                     if (place.Evaluation.length) {
-                        note = parseInt(note / place.Evaluation.length);
-                        //console.log('___________________',note)
+                        note = note / place.Evaluation.length;
+                        //console.log('___________________', note)
 
                     }
-                    place.Notice = note;
+                    place.Notice = Math.floor(note);
                     //console.log(note)
                 }
                 res.status(201).json({
@@ -257,6 +328,7 @@ exports.getAllPlacesToCheck = (req, res) => {
         });
     }
 }
+
 
 exports.uploadImagePlace = (req, res) => {
     try {

@@ -15,18 +15,22 @@ const PlaceSchema = new Schema({
             City: String,
             PostalCode: String
         },
-        Category: String,
+        Category: {
+            type: mongoose.Schema.Types.ObjectId,
+            Ref: 'category'
+        },
         Evaluation: [{
             type: mongoose.Schema.Types.ObjectId,
             Ref: 'evaluation'
         }],
-        Notice: {
-            Number,
-            default: 0
-        },
+        Notice: Number,
         Status: {
             type: Boolean,
             default: false
+        },
+        CreatedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            Ref: 'user'
         }
     })
     //PlaceSchema.plugin(require('mongoose-autopopulate'))

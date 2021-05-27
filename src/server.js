@@ -41,6 +41,11 @@ app.use('/api/Place', PlaceRoute);
 const EvaluationRoute = require('./routes/Evaluation');
 app.use('/api/evaluation', EvaluationRoute)
 
+const CategoryRoute = require('./routes/Category');
+app.use('/api/category', CategoryRoute)
+
+
+
 mongoose.connect(config.db, { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true });
 
 const connection = mongoose.connection;
