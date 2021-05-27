@@ -151,7 +151,7 @@ exports.GetUserById = (req, res) => {
                     place.Notice = Math.floor(note);
                     //console.log(note)
                 }
-                res.json(user.Places)
+                res.json(user)
             }
 
         }).populate([{
