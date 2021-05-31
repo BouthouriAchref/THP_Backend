@@ -4,7 +4,7 @@ const place = require('../schemas/place');
 const user = require('../schemas/user');
 
 exports.addPlace = (req, res) => {
-    console.log('___', req.body)
+    //console.log('___', req.body)
     const { name, description, address, state, city, zip, lat, lon } = req.body
     const placeToSend = {
         Name: name,
@@ -23,7 +23,7 @@ exports.addPlace = (req, res) => {
     try {
         // let newPlace = Place(req.body)
         let newPlace = new Place(placeToSend)
-        console.log('place', newPlace)
+            //console.log('place', newPlace)
         newPlace.save((err, place) => {
             if (err) {
                 res.satus(400).json({ 'msg': err })
@@ -38,7 +38,8 @@ exports.addPlace = (req, res) => {
                             } else {
                                 res.status(201).json({
                                     msg: 'succes',
-                                    user: result
+                                    user: result,
+                                    place: resultt
                                 })
                             }
                         }).populate([{
@@ -183,7 +184,6 @@ exports.getPlaceById = (req, res) => {
     }
 }
 
-
 exports.getAllPlaces = (req, res) => {
     try {
         Place.find({ 'Status': true }, (err, places) => {
@@ -268,6 +268,20 @@ exports.getAllPlacesNoCheck = (req, res) => {
                 model: "attachment"
             },
             {
+                path: "CreatedBy",
+                model: "user",
+                populate: {
+                    path: "Avatar",
+                    model: "attachment"
+                }
+
+            },
+            {
+                path: "Category",
+                model: "category"
+
+            },
+            {
                 path: "Evaluation",
                 model: "evaluation"
 
@@ -318,6 +332,20 @@ exports.getAllPlacesToCheck = (req, res) => {
                 model: "attachment"
             },
             {
+                path: "CreatedBy",
+                model: "user",
+                populate: {
+                    path: "Avatar",
+                    model: "attachment"
+                }
+
+            },
+            {
+                path: "Category",
+                model: "category"
+
+            },
+            {
                 path: "Evaluation",
                 model: "evaluation"
 
@@ -336,8 +364,8 @@ exports.getAllPlacesToCheck = (req, res) => {
 
 exports.uploadImagePlace = (req, res) => {
     try {
-        console.log(req.file)
-        attachement.create({ "Name": req.file.filename.substr(0, 100), "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        console.log('___req.file', req.file)
+        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
@@ -345,6 +373,7 @@ exports.uploadImagePlace = (req, res) => {
                     reqFile: req.file
                 })
             } else {
+                console.log('result Attachement', result)
                 Place.findOneAndUpdate({ "_id": req.params.placeId }, { $push: { "Attachement": result._id } }, { new: true, useFindAndModify: false }, (errr, resul) => {
                     if (errr) {
                         res.status(500).json({
@@ -352,6 +381,7 @@ exports.uploadImagePlace = (req, res) => {
                             error: errr
                         })
                     } else {
+                        console.log('place resul', resul)
                         res.status(201).json({
                             message: "succes uploading",
                             result: result,
@@ -360,6 +390,44 @@ exports.uploadImagePlace = (req, res) => {
                     }
                 })
             }
+        })
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+}
+
+exports.uploadImagesPlace = (req, res) => {
+    try {
+        console.log('___req.file', req.file)
+        for (let file of req.files) {
+            attachement.create({ "Name": file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + file.path.replace("\\", "/"), "Size": file.size, "Format": file.filename.replace(file.filename, file.filename.substring(file.filename.length - 4, file.filename.length)) }, async(err, result) => {
+                if (err) {
+                    res.status(500).json({
+                        message: "failed uploading",
+                        error: err,
+                    })
+                } else {
+                    console.log('result Attachement', result)
+                    Place.findOneAndUpdate({ "_id": req.params.placeId }, { $push: { "Attachement": result._id } }, { new: true, useFindAndModify: false }, (errr, resul) => {
+                        if (errr) {
+                            res.status(500).json({
+                                message: "Place Not Found",
+                                error: errr
+                            })
+                        }
+                    })
+                }
+
+            })
+        }
+        res.status(201).json({
+            message: "succes uploading",
+            result: result
         })
     } catch {
         (err => {
@@ -517,6 +585,69 @@ exports.removePlaceToFavorite = (req, res) => {
                 model: "place"
             }
         ]);
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+}
+
+exports.getPlaceSearch = (req, res) => {
+    try {
+        Place.find({ 'Name': req.params.word, 'Adresse.Department': req.params.word, 'Adresse.City': req.params.word, 'Adresse.Text': req.params.word, 'Adresse.': req.params.word }, (err, places) => {
+            if (err) {
+                res.status(400).json({
+
+                    'msg': err,
+                    success: false
+                })
+            } else {
+                for (let place of places) {
+                    let note = 0
+                    for (let eval of place.Evaluation) {
+                        if (place.Evaluation.length) {
+                            note = eval.Notice + note;
+                        }
+                    }
+                    if (place.Evaluation.length) {
+                        note = note / place.Evaluation.length;
+                        //console.log('___________________', note)
+
+                    }
+                    place.Notice = Math.floor(note);
+                    //console.log(note)
+                }
+                res.status(201).json({
+                    data: places,
+                    success: true
+                })
+            }
+        }).populate([{
+                path: "Attachement",
+                model: "attachment"
+            },
+            {
+                path: "Evaluation",
+                model: "evaluation"
+
+            },
+            {
+                path: "Category",
+                model: "category"
+            },
+            {
+                path: "CreatedBy",
+                model: "user",
+                populate: {
+                    path: "Avatar",
+                    model: "attachment"
+                }
+            }
+
+        ])
     } catch {
         (err => {
             console.log(err);
