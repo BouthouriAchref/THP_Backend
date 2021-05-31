@@ -6,30 +6,30 @@ const { db } = require('../config/config');
 
 exports.uploadImage = (req, res) => {
     try {
-        //console.log('______', req.file.path)
-        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        //console.log('______', req.file)
+        attachement.create({ "Name": req.file.filename, "Path": "https://localhost:3000/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
-                    error: err
+                    error: err,
+                    file: req.file
                 })
             } else {
                 user.findOneAndUpdate({ "_id": req.params.userId }, { $set: { "Avatar": result._id } }, { new: true, useFindAndModify: false }, (errr, resul) => {
                     if (errr) {
                         res.status(500).json({
                             message: "User Not Found",
-                            error: errr
+                            error: errr,
+                            file: req.file
                         })
                     } else {
                         res.status(201).json({
-                                message: "succes uploading",
-                                result: result
-                                    //result: JSON.stringify(result.path).replace('\\','/')
-                            })
-                            //res.sendFile(path.join('', JSON.stringify(result)))
-                            //res.sendFile(path.join(__dirname, 'public', result))
+                            message: "succes uploading",
+                            result: result,
+                            file: req.file
+                        })
                     }
-                }).populate("attachement")
+                })
             }
         })
     } catch {
