@@ -374,12 +374,11 @@ exports.getAllPlacesToCheck = (req, res) => {
 exports.uploadImagePlace = (req, res) => {
     try {
         // console.log('___req.file', req.file)
-        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        attachement.create({ "Name": req.file.filename, "Path": "http://localhost:3000/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
-                    error: err,
-                    reqFile: req.file
+                    error: err
                 })
             } else {
                 // console.log('result Attachement', result)
@@ -394,7 +393,7 @@ exports.uploadImagePlace = (req, res) => {
                         res.status(201).json({
                             message: "succes uploading",
                             result: result,
-                            test: req.file
+                            resul: resul
                         })
                     }
                 })

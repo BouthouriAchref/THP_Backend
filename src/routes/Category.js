@@ -7,6 +7,6 @@ CategoryRoute.post('/addCat', category.addCategory);
 CategoryRoute.put('/:catId', uploads.upload.single('image'), category.uploadImageCategory);
 CategoryRoute.get('/', category.getAllCategory);
 CategoryRoute.get('/:catId', category.getCategoryById);
-CategoryRoute.delete('deleteCat/:catId', category.deleteCategory);
+CategoryRoute.delete('/deleteCat/:catId', category.deleteCategory);
 
 module.exports = CategoryRoute;
