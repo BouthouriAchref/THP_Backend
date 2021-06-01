@@ -374,7 +374,7 @@ exports.getAllPlacesToCheck = (req, res) => {
 exports.uploadImagePlace = (req, res) => {
     try {
         // console.log('___req.file', req.file)
-        attachement.create({ "Name": req.file.filename, "Path": "http://localhost:3000/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
@@ -447,7 +447,6 @@ exports.uploadImagesPlace = (req, res) => {
     }
 }
 
-
 exports.deletePlace = (req, res) => {
     try {
         const id = req.params.placeId;
@@ -471,7 +470,6 @@ exports.deletePlace = (req, res) => {
         });
     }
 }
-
 
 exports.checkPlace = (req, res) => {
     try {
