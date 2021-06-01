@@ -42,7 +42,8 @@ exports.uploadImageCategory = (req, res) => {
                     } else {
                         res.status(201).json({
                             message: "succes uploading",
-                            result: result
+                            result: result,
+                            resul: resul
                         })
                     }
                 })
@@ -106,4 +107,28 @@ exports.getCategoryById = (req, res) => {
         });
     }
 
+}
+
+exports.deleteCategory = (req, res) => {
+    try {
+        const id = req.params.catId;
+        category.findByIdAndDelete(id)
+            .then(data => {
+                if (!data) {
+                    res.status(404).send({ message: `Cannot Delete with id ${id}. Maybe id is wrong` })
+                } else {
+                    res.send({
+                        message: "category was deleted successfully!"
+                    })
+                }
+            })
+
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
 }
