@@ -245,7 +245,6 @@ exports.getAllPlaces = (req, res) => {
     }
 }
 
-
 exports.getAllPlacesNoCheck = (req, res) => {
     try {
         Place.find({ 'Status': false }, (err, places) => {
@@ -308,7 +307,6 @@ exports.getAllPlacesNoCheck = (req, res) => {
         });
     }
 }
-
 
 exports.getAllPlacesToCheck = (req, res) => {
     try {
@@ -373,11 +371,10 @@ exports.getAllPlacesToCheck = (req, res) => {
     }
 }
 
-
 exports.uploadImagePlace = (req, res) => {
     try {
-        console.log('___req.file', req.file)
-        attachement.create({ "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        // console.log('___req.file', req.file)
+        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
@@ -385,7 +382,7 @@ exports.uploadImagePlace = (req, res) => {
                     reqFile: req.file
                 })
             } else {
-                console.log('result Attachement', result)
+                // console.log('result Attachement', result)
                 Place.findOneAndUpdate({ "_id": req.params.placeId }, { $push: { "Attachement": result._id } }, { new: true, useFindAndModify: false }, (errr, resul) => {
                     if (errr) {
                         res.status(500).json({
@@ -393,7 +390,7 @@ exports.uploadImagePlace = (req, res) => {
                             error: errr
                         })
                     } else {
-                        console.log('place resul', resul)
+                        // console.log('place resul', resul)
                         res.status(201).json({
                             message: "succes uploading",
                             result: result,

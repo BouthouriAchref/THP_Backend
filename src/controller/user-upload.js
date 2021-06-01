@@ -11,22 +11,19 @@ exports.uploadImage = (req, res) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
-                    error: err,
-                    file: req.file
+                    error: err
                 })
             } else {
                 user.findOneAndUpdate({ "_id": req.params.userId }, { $set: { "Avatar": result._id } }, { new: true, useFindAndModify: false }, (errr, resul) => {
                     if (errr) {
                         res.status(500).json({
                             message: "User Not Found",
-                            error: errr,
-                            file: req.file
+                            error: errr
                         })
                     } else {
                         res.status(201).json({
                             message: "succes uploading",
-                            result: result,
-                            file: req.file
+                            result: result
                         })
                     }
                 })
