@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const config = require('../config/config');
 const Attachment = require('../schemas/attachement');
 const bcrypt = require('bcrypt');
+const user = require('../schemas/user');
 
 function createToken(user) {
     return jwt.sign({ id: user.id, email: user.email }, config.jwtSecret, {
@@ -92,7 +93,7 @@ exports.registerUserFacebook = async(req, res) => {
 }
 
 exports.loginUser = (req, res) => {
-    //console.log('"""', req.body);
+    console.log('"""', req.body);
     try {
         if (!req.body.email || !req.body.password) {
             return res.status(400).json({ 'msg': 'You need to send email and password' });
@@ -114,6 +115,7 @@ exports.loginUser = (req, res) => {
                         id: user.id
                     });
                 } else {
+                    console.log(user.password)
                     return res.status(400).json({ msg: 'The email and password don\'t match.' });
                 }
             })
@@ -270,7 +272,7 @@ exports.deleteUser = (req, res) => {
 }
 
 exports.editProfile = (req, res) => {
-    let newBirthday, newGender, newNationalite, newfullname, newpassword;
+    let newBirthday, newGender, newNationalite, newfullname;
     console.log('crendetialform', req.body, '\nid', req.params.userId)
     try {
         User.findById({ "_id": req.params.userId }, (err, resul) => {
@@ -302,18 +304,25 @@ exports.editProfile = (req, res) => {
                 }
                 if (!req.body.newpassword) {
                     newpassword = resul.password
+
                 } else {
-                    bcrypt.genSalt(10, function(err, salt) {
-                        //if (err) return next(err);
+                    resul.comparePassword(req.body.oldpassword, (err, isMatch) => {
+                        if (isMatch && !err) {
+                            bcrypt.genSalt(10, function(err, salt) {
+                                //if (err) return next(err);
 
-                        bcrypt.hash(req.body.newpassword, salt, function(err, hash) {
-                            //if (err) return (err);
+                                bcrypt.hash(req.body.newpassword, salt, function(err, hash) {
+                                    //if (err) return (err);
 
-                            newpassword = hash;
-                            next();
-                        });
+                                    newpassword = hash;
+                                    console.log('newpassword', newpassword)
+                                        //next();
+                                });
 
-                    });
+                            });
+                        }
+                    })
+
                 }
                 User.findByIdAndUpdate({ "_id": req.params.userId }, { $set: { "Birthday": newBirthday, "Gender": newGender, "Nationalite": newNationalite, "fullname": newfullname } }, { new: true, useFindAndModify: false }, (err, result) => {
                     if (err) {
@@ -323,7 +332,7 @@ exports.editProfile = (req, res) => {
                         })
                     } else {
                         res.status(201).json({
-                            message: "succes uploading",
+                            message: "succes updating",
                             result: result
                         })
                     }
@@ -349,6 +358,86 @@ exports.editProfile = (req, res) => {
                     }
                 ]);
             }
+        })
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+}
+
+exports.updatePassword = (req, res) => {
+    let newPassword;
+    try {
+        User.findById({ "_id": req.params.userId }, (err, resul) => {
+            if (err) {
+                res.status(500).json({
+                    message: "User Not Found",
+                    error: errr
+                })
+            } else {
+                resul.comparePassword(req.body.oldpassword, (err, isMatch) => {
+                    if (isMatch && !err) {
+                        bcrypt.genSalt(10, function(err, salt) {
+                            //if (err) return next(err);
+                            console.log('salt', salt)
+
+                            bcrypt.hash(req.body.newpassword, salt, function(err, hash) {
+                                //if (err) return (err);
+
+                                newPassword = hash;
+                                console.log('newpassword', newPassword)
+                                    //next();
+                            });
+
+                        });
+                    } else {
+                        res.status(400).json({
+                            updatePassword: false,
+                            head: 'Warning',
+                            message: 'Password invalid'
+                        })
+                    }
+                })
+            }
+            User.findByIdAndUpdate({ "_id": req.params.userId }, { $set: { "password": newPassword } }, { new: true, useFindAndModify: false }, (err, result) => {
+                if (err) {
+                    res.status(500).json({
+                        message: "User Not Found",
+                        error: errr
+                    })
+                } else {
+                    res.status(201).json({
+                        updatePassword: true,
+                        head: 'Info',
+                        message: "succes updating",
+                        result: result
+                    })
+                }
+            }).populate([{
+                    path: "Avatar", // name field in shema
+                    model: "attachment", // name document
+                },
+                {
+                    path: "Places",
+                    model: "place",
+                    populate: {
+                        path: "Attachement",
+                        model: "attachment"
+                    }
+                },
+                {
+                    path: "FavoritesPlaces",
+                    model: "place",
+                    populate: {
+                        path: "Attachement",
+                        model: "attachment"
+                    }
+                }
+            ]);
         })
     } catch {
         (err => {

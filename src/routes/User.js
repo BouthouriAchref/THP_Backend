@@ -25,7 +25,8 @@ AuthRoute.get('/users', userController.GetAllUsers);
 AuthRoute.post('/user/upload/:userId', uploads.upload.single('image'), Uploads.uploadImage);
 AuthRoute.get('/user/avatar/:userId', Uploads.getAvatar);
 AuthRoute.get('/user/getAvatar/:imageId', Uploads.getImage);
-AuthRoute.put('/user/editProfile/:userId', userController.editProfile)
+AuthRoute.put('/user/editProfile/:userId', userController.editProfile);
+AuthRoute.put('/user/password/:userId', userController.updatePassword);
 AuthRoute.delete('/users/:userId', userController.deleteUser);
 
 module.exports = AuthRoute;
