@@ -1,5 +1,6 @@
 const category = require("../schemas/category");
 const attachement = require('../schemas/attachement');
+const config = require("../config/config");
 
 exports.addCategory = (req, res) => {
     try {
@@ -26,7 +27,7 @@ exports.addCategory = (req, res) => {
 exports.uploadImageCategory = (req, res) => {
     try {
         console.log(req.file)
-        attachement.create({ "Name": req.file.filename.substr(0, 100), "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        attachement.create({ "Name": req.file.filename, "Path": config.path + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",

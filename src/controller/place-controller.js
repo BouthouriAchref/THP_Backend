@@ -2,6 +2,7 @@ const Place = require('../schemas/place')
 const attachement = require('../schemas/attachement');
 const place = require('../schemas/place');
 const user = require('../schemas/user');
+const config = require('../config/config');
 
 exports.addPlace = (req, res) => {
     //console.log('___', req.body)
@@ -374,7 +375,7 @@ exports.getAllPlacesToCheck = (req, res) => {
 exports.uploadImagePlace = (req, res) => {
     try {
         // console.log('___req.file', req.file)
-        attachement.create({ "Name": req.file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        attachement.create({ "Name": req.file.filename, "Path": config.path + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",
@@ -413,7 +414,7 @@ exports.uploadImagesPlace = (req, res) => {
     try {
         console.log('___req.file', req.file)
         for (let file of req.files) {
-            attachement.create({ "Name": file.filename, "Path": "https://tunisian-hidden-places.herokuapp.com/" + file.path.replace("\\", "/"), "Size": file.size, "Format": file.filename.replace(file.filename, file.filename.substring(file.filename.length - 4, file.filename.length)) }, async(err, result) => {
+            attachement.create({ "Name": file.filename, "Path": config.path + file.path.replace("\\", "/"), "Size": file.size, "Format": file.filename.replace(file.filename, file.filename.substring(file.filename.length - 4, file.filename.length)) }, async(err, result) => {
                 if (err) {
                     res.status(500).json({
                         message: "failed uploading",

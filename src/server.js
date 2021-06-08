@@ -59,4 +59,4 @@ connection.on('error', (err) => {
     process.exit();
 });
 app.listen(port);
-console.log('There will be dragons: http://localhost:' + port);
+console.log('There will be dragons: ' + config.path);
