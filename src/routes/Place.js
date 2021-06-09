@@ -14,6 +14,7 @@ PlaceRoute.put('/Places/addfavorite/:placeId/:userId', place.addPlaceToFavorite)
 PlaceRoute.put('/Places/removefavorite/:placeId/:userId', place.removePlaceToFavorite);
 PlaceRoute.post('/file/:placeId', uploads.upload.single('image'), place.uploadImagePlace);
 PlaceRoute.post('/files/:placeId', uploads.upload.array('images'), place.uploadImagesPlace);
+PlaceRoute.delete('/places/:userId/:placeId', place.deletePlaceById);
 PlaceRoute.delete('/places/:placeId', place.deletePlace);
 
 module.exports = PlaceRoute;
