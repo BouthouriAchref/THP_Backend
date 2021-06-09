@@ -137,17 +137,20 @@ exports.getPlaceById = (req, res) => {
                 res.status(400).json({ msg: 'no place found with this ID' })
             }
             let note = 0
-            for (let eval of place.Evaluation) {
-                if (place.Evaluation.length) {
-                    note = eval.Notice + note;
+            console.log('____', place)
+            if (!place == null) {
+                for (let eval of place.Evaluation) {
+                    if (place.Evaluation.length) {
+                        note = eval.Notice + note;
+                    }
                 }
-            }
-            if (place.Evaluation.length) {
-                note = note / place.Evaluation.length;
+                if (place.Evaluation.length) {
+                    note = note / place.Evaluation.length;
 
+                }
+                //console.log(note)
+                place.Notice = Math.floor(note);
             }
-            //console.log(note)
-            place.Notice = Math.floor(note);
             res.status(201).json({
                 data: place,
                 success: true
@@ -459,6 +462,37 @@ exports.deletePlace = (req, res) => {
                     res.send({
                         message: "Place was deleted successfully!"
                     })
+                }
+            })
+
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+}
+
+exports.deletePlaceById = (req, res) => {
+    try {
+        const id = req.params.placeId;
+        Place.findByIdAndDelete(id)
+            .then(data => {
+                if (!data) {
+                    res.status(404).send({ message: `Cannot Delete with id ${id}. Maybe id is wrong` })
+                } else {
+                    user.findOneAndUpdate({ "_id": req.params.userId }, { $pull: { "Places": id } }, { new: true, useFindAndModify: false }, (err, result) => {
+                        if (err) {
+                            res.status(400).json({ 'msg': err })
+                        } else {
+                            res.send({
+                                message: "Place was deleted successfully!"
+                            })
+                        }
+                    })
+
                 }
             })
 
