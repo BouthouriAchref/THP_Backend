@@ -12,8 +12,8 @@ PlaceRoute.get('/Places/Search/:word', place.getPlaceSearch);
 PlaceRoute.put('/Places/check/:placeId', place.checkPlace);
 PlaceRoute.put('/Places/addfavorite/:placeId/:userId', place.addPlaceToFavorite);
 PlaceRoute.put('/Places/removefavorite/:placeId/:userId', place.removePlaceToFavorite);
-PlaceRoute.post('/file/:placeId', uploads.upload.single('image'), place.uploadImagePlace);
-PlaceRoute.post('/files/:placeId', uploads.upload.array('images'), place.uploadImagesPlace);
+PlaceRoute.post('/file/:placeId', uploads.single('image'), place.uploadImagePlace);
+PlaceRoute.post('/files/:placeId', uploads.array('images'), place.uploadImagesPlace);
 PlaceRoute.delete('/places/:userId/:placeId', place.deletePlaceById);
 PlaceRoute.delete('/places/:placeId', place.deletePlace);
 

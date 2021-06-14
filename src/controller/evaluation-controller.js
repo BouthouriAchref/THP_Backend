@@ -44,3 +44,35 @@ exports.addEvaluation = (req, res) => {
     }
 
 }
+
+exports.deleteEvaluation = (req, res) => {
+    try {
+        const id = req.params.placeId;
+        evaluation.findByIdAndDelete(req.params.evalId)
+            .then(data => {
+                if (!data) {
+                    res.status(404).send({ message: `Cannot Delete with id ${id}. Maybe id is wrong` })
+                } else {
+                    place.findOneAndUpdate({ "_id": id }, { $pull: { "Evaluation": req.params.evalId } }, { new: true, useFindAndModify: false }, (err, result) => {
+                        if (err) {
+                            res.status(400).json({ 'msg': err })
+                        } else {
+                            res.status(201).json({
+                                msg: 'Evaluation was deleted successfully!',
+                                result: result
+                            })
+                        }
+                    })
+                }
+            })
+
+    } catch {
+        (err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+    }
+
+}

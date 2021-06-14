@@ -1,13 +1,15 @@
 const attachement = require('../schemas/attachement');
 const user = require('../schemas/user');
 const path = require('path')
+const cloudinary = require('../use/cloudinary')
 const fs = require('fs');
 const { db } = require('../config/config');
 
-exports.uploadImage = (req, res) => {
+exports.uploadImage = async(req, res) => {
     try {
-        //console.log('______', req.file)
-        attachement.create({ "Name": req.file.filename, "Path": config.path + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        const result = await cloudinary.uploader.upload(req.file.path)
+            //console.log('______', req.file)
+        attachement.create({ "Path": result.secure_url, "Size": result.bytes, "Format": result.format }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",

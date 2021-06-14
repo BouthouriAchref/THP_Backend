@@ -22,7 +22,7 @@ AuthRoute.post('/login', userController.loginUser);
 AuthRoute.post('/register/facebook', userController.registerUserFacebook);
 AuthRoute.get('/user/:userId', userController.GetUserById);
 AuthRoute.get('/users', userController.GetAllUsers);
-AuthRoute.post('/user/upload/:userId', uploads.upload.single('image'), Uploads.uploadImage);
+AuthRoute.post('/user/upload/:userId', uploads.single('image'), Uploads.uploadImage);
 AuthRoute.get('/user/avatar/:userId', Uploads.getAvatar);
 AuthRoute.get('/user/getAvatar/:imageId', Uploads.getImage);
 AuthRoute.put('/user/editProfile/:userId', userController.editProfile);

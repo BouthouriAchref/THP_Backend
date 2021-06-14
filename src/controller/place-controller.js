@@ -1,6 +1,7 @@
 const Place = require('../schemas/place')
 const attachement = require('../schemas/attachement');
 const place = require('../schemas/place');
+const cloudinary = require('../use/cloudinary')
 const user = require('../schemas/user');
 const config = require('../config/config');
 
@@ -135,26 +136,12 @@ exports.getPlaceById = (req, res) => {
             //console.log('error',err)
             if (err) {
                 res.status(400).json({ msg: 'no place found with this ID' })
+            } else {
+                res.status(201).json({
+                    data: place,
+                    success: true
+                })
             }
-            let note = 0
-            console.log('____', place)
-            if (!place == null) {
-                for (let eval of place.Evaluation) {
-                    if (place.Evaluation.length) {
-                        note = eval.Notice + note;
-                    }
-                }
-                if (place.Evaluation.length) {
-                    note = note / place.Evaluation.length;
-
-                }
-                //console.log(note)
-                place.Notice = Math.floor(note);
-            }
-            res.status(201).json({
-                data: place,
-                success: true
-            })
         }).populate([{
                 path: "Attachement",
                 model: "attachment"
@@ -176,6 +163,10 @@ exports.getPlaceById = (req, res) => {
 
                 }
 
+            },
+            {
+                path: "CreatedBy",
+                model: "user"
             }
         ]);
     } catch {
@@ -375,10 +366,11 @@ exports.getAllPlacesToCheck = (req, res) => {
     }
 }
 
-exports.uploadImagePlace = (req, res) => {
+exports.uploadImagePlace = async(req, res) => {
     try {
-        // console.log('___req.file', req.file)
-        attachement.create({ "Name": req.file.filename, "Path": config.path + req.file.path.replace("\\", "/"), "Size": req.file.size, "Format": req.file.filename.replace(req.file.filename, req.file.filename.substring(req.file.filename.length - 4, req.file.filename.length)) }, async(err, result) => {
+        const result = await cloudinary.uploader.upload(req.file.path)
+            // console.log('___req.file', req.file)
+        attachement.create({ "Path": result.secure_url, "Size": result.bytes, "Format": result.format }, async(err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "failed uploading",

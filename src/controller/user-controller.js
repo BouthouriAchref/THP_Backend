@@ -192,10 +192,16 @@ exports.GetUserById = (req, res) => {
             {
                 path: "FavoritesPlaces",
                 model: "place",
-                populate: {
-                    path: "Attachement",
-                    model: "attachment"
-                }
+                populate: (
+                    [{
+                        path: "Attachement",
+                        model: "attachment"
+                    }, {
+                        path: "Evaluation",
+                        model: "evaluation"
+                    }]
+                )
+
             }
         ]);
     } catch {
