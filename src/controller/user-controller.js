@@ -216,7 +216,7 @@ exports.GetUserById = (req, res) => {
 
 exports.GetAllUsers = (req, res) => {
     try {
-        User.find((err, users) => {
+        User.find({ 'IsAdmin': false }, (err, users) => {
             if (err) {
                 res.status(400).json({ 'msg': err })
             } else {
@@ -378,14 +378,14 @@ exports.editProfile = (req, res) => {
 exports.updatePassword = (req, res) => {
     let newPassword;
     try {
-        User.findById({ "_id": req.params.userId }, (err, resul) => {
+        User.findById({ "_id": req.params.userId }, (err, result) => {
             if (err) {
                 res.status(500).json({
                     message: "User Not Found",
                     error: errr
                 })
             } else {
-                resul.comparePassword(req.body.oldpassword, (err, isMatch) => {
+                result.comparePassword(req.body.oldpassword, (err, isMatch) => {
                     if (isMatch && !err) {
                         bcrypt.genSalt(10, function(err, salt) {
                             //if (err) return next(err);
@@ -397,9 +397,45 @@ exports.updatePassword = (req, res) => {
                                 newPassword = hash;
                                 console.log('newpassword', newPassword)
                                     //next();
+                                User.findByIdAndUpdate({ "_id": req.params.userId }, { $set: { 'password': newPassword } }, { new: true, useFindAndModify: false }, (err, result) => {
+                                    if (err) {
+                                        res.status(500).json({
+                                            message: "User Not Found",
+                                            error: errr
+                                        })
+                                    } else {
+                                        res.status(201).json({
+                                            updatePassword: true,
+                                            head: 'Info',
+                                            message: "succes updating",
+                                            result: result
+                                        })
+                                    }
+                                }).populate([{
+                                        path: "Avatar", // name field in shema
+                                        model: "attachment", // name document
+                                    },
+                                    {
+                                        path: "Places",
+                                        model: "place",
+                                        populate: {
+                                            path: "Attachement",
+                                            model: "attachment"
+                                        }
+                                    },
+                                    {
+                                        path: "FavoritesPlaces",
+                                        model: "place",
+                                        populate: {
+                                            path: "Attachement",
+                                            model: "attachment"
+                                        }
+                                    }
+                                ]);
                             });
 
                         });
+
                     } else {
                         res.status(400).json({
                             updatePassword: false,
@@ -408,42 +444,9 @@ exports.updatePassword = (req, res) => {
                         })
                     }
                 })
+
             }
-            User.findByIdAndUpdate({ "_id": req.params.userId }, { $set: { "password": newPassword } }, { new: true, useFindAndModify: false }, (err, result) => {
-                if (err) {
-                    res.status(500).json({
-                        message: "User Not Found",
-                        error: errr
-                    })
-                } else {
-                    res.status(201).json({
-                        updatePassword: true,
-                        head: 'Info',
-                        message: "succes updating",
-                        result: result
-                    })
-                }
-            }).populate([{
-                    path: "Avatar", // name field in shema
-                    model: "attachment", // name document
-                },
-                {
-                    path: "Places",
-                    model: "place",
-                    populate: {
-                        path: "Attachement",
-                        model: "attachment"
-                    }
-                },
-                {
-                    path: "FavoritesPlaces",
-                    model: "place",
-                    populate: {
-                        path: "Attachement",
-                        model: "attachment"
-                    }
-                }
-            ]);
+
         })
     } catch {
         (err => {
